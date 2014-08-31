@@ -11,20 +11,18 @@ public class CheatActivity extends Activity {
 	
 	public static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
 	public static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
-	//public static final String TAG = "CheatActivity";
-	//public static final String KEY_BOOLEAN = "Viewed";
+	private static final String KEY_INDEX = "index";
 	
 	private boolean mAnswerIsTrue;
-	//private boolean mIsAnswerPrinted;
+	private int mAnswerToBeShown;
 	
 	private TextView mAnswerTextView;
 	private Button mShowAnswer;
 	
-	private void /*boolean*/ setAnswerShownResult(boolean isAnswerShown) {
+	private void setAnswerShownResult(boolean isAnswerShown) {
 		Intent data = new Intent();
 		data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
 		setResult(RESULT_OK, data);
-		//return isAnswerShown;
 	}
 	
 	@Override
@@ -32,28 +30,22 @@ public class CheatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cheat);
 		
-		/*if(savedInstanceState != null) {
-			mIsAnswerPrinted = savedInstanceState.getBoolean(KEY_BOOLEAN, false);
-			setAnswerShownResult(mIsAnswerPrinted);
-			if(mIsAnswerPrinted) {
-				setAnswerShownResult(true);
-				if(mAnswerIsTrue) {
-					mAnswerTextView.setText(R.string.true_button);
-				}
-				else {
-					mAnswerTextView.setText(R.string.false_button);
-				}
-			}
-			else
-				mIsAnswerPrinted = setAnswerShownResult(false);
-		}*/
-		
 		mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 		
 		mAnswerTextView = (TextView)findViewById(R.id.answerTextView);
 		mShowAnswer = (Button)findViewById(R.id.showAnswerButton);
 		
-		/*mIsAnswerPrinted = */setAnswerShownResult(false);
+		setAnswerShownResult(false);
+		
+		if (savedInstanceState != null) {
+			mAnswerToBeShown = savedInstanceState.getInt(KEY_INDEX, 0);
+			if(mAnswerToBeShown == 1)
+				setAnswerShownResult(true);
+				if(mAnswerIsTrue) 
+					mAnswerTextView.setText(R.string.true_button);
+				else
+					mAnswerTextView.setText(R.string.false_button);
+			}
 		
 		mShowAnswer.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -64,17 +56,17 @@ public class CheatActivity extends Activity {
 				else {
 					mAnswerTextView.setText(R.string.false_button);
 				}
-				/*mIsAnswerPrinted = */setAnswerShownResult(true);
+				setAnswerShownResult(true);
+				mAnswerToBeShown = 1;
 			}
 		});
+		
+		
 	}
 	
-	/*@Override
-	protected void onSaveInstanceState(Bundle savedInstanceState) {
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-		Log.i(TAG, "onSaveInstanceState");
-		savedInstanceState.putBoolean(KEY_BOOLEAN, mIsAnswerPrinted);
-	}*/
-	
-
+		savedInstanceState.putInt(KEY_INDEX, mAnswerToBeShown);
+	}
 }
